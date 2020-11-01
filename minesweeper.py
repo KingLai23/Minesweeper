@@ -1,4 +1,4 @@
-import pygame, random
+import pygame, random, json
     
 grid_unopened = []
 grid_values = []
@@ -349,24 +349,22 @@ def init_grids(NUM_ROW, NUM_COL):
             grid_values[row].append(0)
 
 def setHighScore(mode, time):
-    hsfile = open("highscores.txt", "r+")
-    lines = hsfile.readlines()
-    hsfile.close()
+    with open("highscores.txt") as highscores:
+        data = json.load(highscores)
     
-    hs = float(lines[mode])
-    
-    if hs == -1 or hs > time:
-        hsfile = open("highscores.txt", "w")
-        lines[mode] = time
-
-        hsfile.write(str(lines[0])+'\n')
-        hsfile.write(str(lines[1]))
-        hsfile.write(str(lines[2]))
+        if mode == 0:
+            diff="easy"
+        elif mode == 1:
+            diff="kindaEasy"
+        else:
+            diff="notEasy"
         
-        hsfile.close()
-        
+    if float(data[diff]) == -1 or float(data[diff]) > time:
+        data[diff] = str(time)
+        with open ("highscores.txt", "w") as highscores:
+            json.dump(data, highscores)
         return True
-    
+        
     return False
             
 def gameMenu():
@@ -488,24 +486,26 @@ def gameMenu():
                         if (pos[1] >= HS_TOP and pos[1] <= HS_TOP+HS_HEIGHT):
                             viewHighscores = True
                             
-                            hsfile = open("highscores.txt", "r+")
-                            lines = hsfile.readlines()
-                            if float(lines[0]) == -1:
-                                easyHS = 'n/a'
-                            else:
-                                easyHS = str(float(lines[0]))+"s"
+                            with open("highscores.txt") as json_file:
+                                data = json.load(json_file)
                                 
-                            if float(lines[1]) == -1:
-                                kindaEasyHS = 'n/a'
-                            else:
-                                kindaEasyHS = str(float(lines[1]))+"s"
+                                if float(data["easy"]) == -1:
+                                    easyHS = 'n/a'
+                                else:
+                                    easyHS = data["easy"]+"s"
+                                    
+                                if float(data["kindaEasy"]) == -1:
+                                    kindaEasyHS = 'n/a'
+                                else:
+                                    kindaEasyHS = data["kindaEasy"]+"s"
+                                    
+                                if float(data["notEasy"]) == -1:
+                                    notEasyHS = 'n/a'
+                                else:
+                                    notEasyHS = data["notEasy"]+"s"
                                 
-                            if float(lines[2]) == -1:
-                                notEasyHS = 'n/a'
-                            else:
-                                notEasyHS = str(float(lines[2]))+"s"
-                                
-                            hsfile.close()
+                            
+                            
                         
         else:
             screen.blit(hstext, hstextRect) 

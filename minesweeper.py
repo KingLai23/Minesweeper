@@ -8,10 +8,10 @@ def play(num_row, num_col, num_mines, mode):
     NUM_ROW, NUM_COL, NUM_MINES, MODE = num_row, num_col, num_mines, mode
     init_grids(NUM_ROW, NUM_COL)
     
-    UNCLICKED_COLOR = (235, 233, 228)
-    GRID_COLOR = (171, 167, 157)
-    EMPTY_COLOR = (204, 201, 192)
-    CLICKED_COLOR = (255, 255, 255)
+    UNCLICKED_COLOR = (232, 239, 250)
+    GRID_COLOR = (179, 195, 227)
+    EMPTY_COLOR = (209, 220, 237)
+    CLICKED_COLOR = (240, 246, 255)
 
     TILE_WIDTH = TILE_HEIGHT = 30
     MARGIN = 2
@@ -174,20 +174,21 @@ def play(num_row, num_col, num_mines, mode):
                 time_text_rect.center = (TEXT_WIDTH, TEXT_HEIGHT + 27)
                 screen.blit(time_text, time_text_rect) 
         
-        BUTTON_COLOR = (39, 52, 59)
+        BUTTON_COLOR = (62, 78, 99)
+        BUTTON_TEXT_COLOR = (255,255,255)
         
         pygame.draw.rect(screen, BUTTON_COLOR, [PLAYB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
         pygame.draw.rect(screen, BUTTON_COLOR, [MENUB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
         
         play_font = pygame.font.Font('freesansbold.ttf', 16)               
-        play_text = play_font.render("restart", True, (218, 222, 224), BUTTON_COLOR)   
+        play_text = play_font.render("restart", True, BUTTON_TEXT_COLOR, BUTTON_COLOR)   
             
         play_rect = play_text.get_rect()
         play_rect.center = (PLAYB_LEFT+BUTTON_WIDTH//2, BUTTON_TOP+BUTTON_HEIGHT//2)
         screen.blit(play_text, play_rect) 
         
         menu_font = pygame.font.Font('freesansbold.ttf', 16)               
-        menu_text = menu_font.render("menu", True, (218, 222, 224), BUTTON_COLOR)   
+        menu_text = menu_font.render("menu", True, BUTTON_TEXT_COLOR, BUTTON_COLOR)   
             
         menu_rect = menu_text.get_rect()
         menu_rect.center = (MENUB_LEFT+BUTTON_WIDTH//2, BUTTON_TOP+BUTTON_HEIGHT//2)

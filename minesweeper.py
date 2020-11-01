@@ -8,10 +8,10 @@ def play(num_row, num_col, num_mines, mode):
     NUM_ROW, NUM_COL, NUM_MINES, MODE = num_row, num_col, num_mines, mode
     init_grids(NUM_ROW, NUM_COL)
     
-    UNCLICKED_COLOR = (232, 239, 250)
+    UNCLICKED_COLOR = (245, 249, 255)
     GRID_COLOR = (179, 195, 227)
     EMPTY_COLOR = (209, 220, 237)
-    CLICKED_COLOR = (240, 246, 255)
+    CLICKED_COLOR = (245, 249, 255)
 
     TILE_WIDTH = TILE_HEIGHT = 30
     MARGIN = 2
@@ -123,14 +123,10 @@ def play(num_row, num_col, num_mines, mode):
                 finishTime = (pygame.time.get_ticks() - extraTime)/1000
                 isHighscore = setHighScore(MODE, finishTime)
                 gameover = True
-                #done = True
-                #displayMessage(True, (pygame.time.get_ticks() - extraTime) / 1000)
             
             if lost:
                 gameover = True
                 revealGrid(NUM_ROW, NUM_COL)
-                #done = True
-                #displayMessage(False, (pygame.time.get_ticks() - extraTime) / 1000)
         
         if gameover:
             MESSAGE_COLOR = (51, 63, 84)

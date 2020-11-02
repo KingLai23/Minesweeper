@@ -1,1 +1,1 @@
-{"easy": "3.34", "kindaEasy": "-1", "notEasy": "-1"}
+{"easy": "-1", "kindaEasy": "-1", "notEasy": "-1"}

@@ -284,16 +284,16 @@ def gen_board(row, col, NUM_ROW, NUM_COL, NUM_MINES):
 def getImages():
     images = []
 
-    images.append(pygame.image.load('images\\mine.png'))
-    images.append(pygame.image.load('images\\one.png'))
-    images.append(pygame.image.load('images\\two.png'))
-    images.append(pygame.image.load('images\\three.png'))
-    images.append(pygame.image.load('images\\four.png'))
-    images.append(pygame.image.load('images\\five.png'))
-    images.append(pygame.image.load('images\\six.png'))
-    images.append(pygame.image.load('images\\seven.png'))
-    images.append(pygame.image.load('images\\eight.png'))
-    images.append(pygame.image.load('images\\flag.png'))
+    images.append(pygame.image.load('images\\mine.jpg'))
+    images.append(pygame.image.load('images\\one.jpg'))
+    images.append(pygame.image.load('images\\two.jpg'))
+    images.append(pygame.image.load('images\\three.jpg'))
+    images.append(pygame.image.load('images\\four.jpg'))
+    images.append(pygame.image.load('images\\five.jpg'))
+    images.append(pygame.image.load('images\\six.jpg'))
+    images.append(pygame.image.load('images\\seven.jpg'))
+    images.append(pygame.image.load('images\\eight.jpg'))
+    images.append(pygame.image.load('images\\flag.jpg'))
 
     return images    
         

@@ -8,7 +8,8 @@ def play(num_row, num_col, num_mines, mode):
     NUM_ROW, NUM_COL, NUM_MINES, MODE = num_row, num_col, num_mines, mode
     init_grids(NUM_ROW, NUM_COL)
     
-    UNCLICKED_COLOR = (245, 249, 255)
+    # UNCLICKED_COLOR = (245, 249, 255)
+    UNCLICKED_COLOR = (255, 255, 255)
     GRID_COLOR = (179, 195, 227)
     EMPTY_COLOR = (209, 220, 237)
     CLICKED_COLOR = (245, 249, 255)

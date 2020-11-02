@@ -19,7 +19,6 @@ def play(num_row, num_col, num_mines, mode):
 
     images = getImages()
     
-    mine_locations = []
     pygame.init
     
     GAME_WIDTH = TILE_HEIGHT*NUM_COL+(NUM_COL+1)*MARGIN
@@ -67,7 +66,7 @@ def play(num_row, num_col, num_mines, mode):
                 tile_click = row < NUM_ROW and column < NUM_COL
                 
                 if firstClick and tile_click:
-                    mine_locations = gen_board(row, column, NUM_ROW, NUM_COL, NUM_MINES)
+                    gen_board(row, column, NUM_ROW, NUM_COL, NUM_MINES)
                     extraTime = pygame.time.get_ticks()
                     firstClick = False
                 
@@ -75,7 +74,7 @@ def play(num_row, num_col, num_mines, mode):
                 #print(row, column)
                 
                 if not gameover and tile_click:
-                    if (event.button == 1):
+                    if (event.button == 1 and not grid_flags[row][column]):
                         open_tiles(row, column, NUM_ROW, NUM_COL)
                         open_number(NUM_ROW, NUM_COL)   
                         
@@ -119,7 +118,7 @@ def play(num_row, num_col, num_mines, mode):
             
         
         if not (firstClick or gameover):
-            if checkWin(mine_locations, NUM_ROW, NUM_COL):
+            if checkWin(NUM_ROW, NUM_COL):
                 finishTime = (pygame.time.get_ticks() - extraTime)/1000
                 isHighscore = setHighScore(MODE, finishTime)
                 gameover = True
@@ -259,31 +258,26 @@ def gen_board(row, col, NUM_ROW, NUM_COL, NUM_MINES):
     mine_locations = gen_mines(row, col, NUM_ROW, NUM_COL, NUM_MINES)        
             
     for mine_location in mine_locations:
-        grid_values[mine_location[0]][mine_location[1]] = 10
+        i = mine_location[0]
+        j = mine_location[1]
+        grid_values[i][j] = 10
         
-    for i in range (NUM_ROW):
-        for j in range (NUM_COL):
-            if grid_values[i][j] != 10:
-                num_mines=0
-            
-                if (i-1 > -1 and j-1 > -1 and grid_values[i-1][j-1] == 10):
-                    num_mines+=1
-                if (i-1 > -1 and grid_values[i-1][j] == 10):
-                    num_mines+=1
-                if (i-1 > -1 and j+1 < NUM_COL and grid_values[i-1][j+1] == 10):
-                    num_mines+=1
-                if (j-1 > -1 and grid_values[i][j-1] == 10):
-                    num_mines+=1
-                if (j+1 < NUM_COL and grid_values[i][j+1] == 10):
-                    num_mines+=1
-                if (i+1 < NUM_ROW and j-1 > -1 and grid_values[i+1][j-1] == 10):
-                    num_mines+=1
-                if (i+1 < NUM_ROW and grid_values[i+1][j] == 10):
-                    num_mines+=1  
-                if (i+1 < NUM_ROW and j+1 < NUM_COL and grid_values[i+1][j+1] == 10):
-                    num_mines+=1  
-            
-                grid_values[i][j] = num_mines
+        if (i-1 > -1 and j-1 > -1 and grid_values[i-1][j-1] != 10):
+            grid_values[i-1][j-1]+=1
+        if (i-1 > -1 and grid_values[i-1][j] != 10):
+            grid_values[i-1][j]+=1
+        if (i-1 > -1 and j+1 < NUM_COL and grid_values[i-1][j+1] != 10):
+            grid_values[i-1][j+1]+=1
+        if (j-1 > -1 and grid_values[i][j-1] != 10):
+            grid_values[i][j-1]+=1
+        if (j+1 < NUM_COL and grid_values[i][j+1] != 10):
+            grid_values[i][j+1]+=1
+        if (i+1 < NUM_ROW and j-1 > -1 and grid_values[i+1][j-1] != 10):
+            grid_values[i+1][j-1]+=1
+        if (i+1 < NUM_ROW and grid_values[i+1][j] != 10):
+            grid_values[i+1][j]+=1  
+        if (i+1 < NUM_ROW and j+1 < NUM_COL and grid_values[i+1][j+1] != 10):
+            grid_values[i+1][j+1]+=1       
                 
     return mine_locations
             
@@ -302,17 +296,8 @@ def getImages():
     images.append(pygame.image.load('images\\flag.png'))
 
     return images    
-
-def checkWin(mine_locations, NUM_ROW, NUM_COL):
-    return checkFlagWin(mine_locations) or checkRegWin(NUM_ROW, NUM_COL)
-
-def checkFlagWin(mine_locations):
-    for mine_coord in mine_locations:
-        if not grid_flags[mine_coord[0]][mine_coord[1]]:
-            return False
-    return True
         
-def checkRegWin(NUM_ROW, NUM_COL):
+def checkWin(NUM_ROW, NUM_COL):
     for i in range(NUM_ROW):
         for j in range (NUM_COL):
             if (grid_values[i][j] != 10 and not grid_unopened[i][j]):
@@ -499,10 +484,7 @@ def gameMenu():
                                     notEasyHS = 'n/a'
                                 else:
                                     notEasyHS = data["notEasy"]+"s"
-                                
-                            
-                            
-                        
+                 
         else:
             screen.blit(hstext, hstextRect) 
             

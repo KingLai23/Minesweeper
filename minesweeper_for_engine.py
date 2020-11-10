@@ -1,7 +1,7 @@
 import pygame, random, time, copy
 from minesweeper_engine import *
     
-grid_unopened = []
+opened_tile = []
 grid_values = []
 grid_flags = []
 
@@ -10,14 +10,15 @@ def play(num_row, num_col, num_mines, delay, auto_quit):
     NUM_ROW, NUM_COL, NUM_MINES = num_row, num_col, num_mines
     init_grids(NUM_ROW, NUM_COL)
     
-    UNCLICKED_COLOR = (232, 239, 250)
-    GRID_COLOR = (179, 195, 227)
-    EMPTY_COLOR = (209, 220, 237)
-    CLICKED_COLOR = (240, 246, 255)
+    # UNCLICKED_COLOR = (232, 239, 250)
+    UNCLICKED_COLOR = (31, 31, 31)
+    GRID_COLOR = (40,40,40)
+    EMPTY_COLOR = (40,40,40)
+    CLICKED_COLOR = (31, 31, 31)
 
-    TILE_WIDTH = TILE_HEIGHT = 30
+    TILE_WIDTH = TILE_HEIGHT = 25
     MARGIN = 2
-    TEXT_AREA = 50
+    TEXT_AREA = 40
 
     images = getImages()
     
@@ -31,7 +32,7 @@ def play(num_row, num_col, num_mines, delay, auto_quit):
     WINDOW_HEIGHT = GAME_HEIGHT+TEXT_AREA
     WINDOW_SIZE = [WINDOW_WIDTH, WINDOW_HEIGHT]
     
-    BUTTON_WIDTH, BUTTON_HEIGHT = 85, 30
+    BUTTON_WIDTH, BUTTON_HEIGHT = 40, 28
     BUTTON_TOP = (TEXT_AREA - BUTTON_HEIGHT)//2 + GAME_HEIGHT
     PLAYB_LEFT = (WINDOW_WIDTH // 2) - BUTTON_WIDTH - 9
     MENUB_LEFT= (WINDOW_WIDTH // 2) + 9
@@ -50,14 +51,13 @@ def play(num_row, num_col, num_mines, delay, auto_quit):
     start_time = pygame.time.get_ticks()
     firstClick = True
 
-    engine = minesweeper_engine(NUM_ROW, NUM_COL)
+    engine = minesweeper_engine(NUM_ROW, NUM_COL, num_mines)
     
     moves_made, tiles=0,0
     
     prev_boards = []
-    prev_boards.append(copy.deepcopy(grid_unopened))
+    prev_boards.append(copy.deepcopy(opened_tile))
     current_revision = 0
-    usePrev = False
 
     while not done:             
         for event in pygame.event.get():
@@ -71,44 +71,46 @@ def play(num_row, num_col, num_mines, delay, auto_quit):
                         if (pos[1] >= BUTTON_TOP and pos[1] <= BUTTON_TOP+BUTTON_HEIGHT):
                             if current_revision > 0:
                                 current_revision-=1
-                                usePrev = True
                     if (pos[0] >= MENUB_LEFT and pos[0] <= MENUB_LEFT+BUTTON_WIDTH):
                         if (pos[1] >= BUTTON_TOP and pos[1] <= BUTTON_TOP+BUTTON_HEIGHT):
                             if current_revision+1 < len(prev_boards):
                                 current_revision+=1
-                                usePrev = True
                                 
         
         if firstClick:
-            row = random.randint(0,NUM_ROW-1)
-            col =random.randint(0,NUM_COL-1)
+            row,col = engine.firstMove()
             gen_board(row, col, NUM_ROW, NUM_COL, NUM_MINES)
+            print([[row,col]])
             open_tiles(row, col, NUM_ROW, NUM_COL)
             open_number(NUM_ROW, NUM_COL)
             firstClick = False
             moves_made+=1
             
-            prev_boards.append(copy.deepcopy(grid_unopened))
+            prev_boards.append(copy.deepcopy(opened_tile))
             current_revision+=1
 
                         
         elif not gameover:
             to_open = makeMove(engine)
-            moves_made+=len(to_open)
-            for coord in to_open:
-                time.sleep(delay)
-                row = coord[0]
-                column = coord[1]
-                if grid_values[row][column] != 10:
-                    open_tiles(row, column, NUM_ROW, NUM_COL)
-                    open_number(NUM_ROW, NUM_COL)
-                    
-                    if (prev_boards[current_revision] != grid_unopened):
-                        prev_boards.append(copy.deepcopy(grid_unopened))
-                        current_revision+=1
-                else:
-                    lost = True
-                            
+            
+            if to_open != []:
+                moves_made+=len(to_open)
+                for coord in to_open:
+                    time.sleep(delay)
+                    row = coord[0]
+                    column = coord[1]
+                    if grid_values[row][column] != 10:
+                        open_tiles(row, column, NUM_ROW, NUM_COL)
+                        open_number(NUM_ROW, NUM_COL)
+                        
+                        if (prev_boards[current_revision] != opened_tile):
+                            prev_boards.append(copy.deepcopy(opened_tile))
+                            current_revision+=1
+                    else:
+                        lost = True
+            else:
+                lost = True
+                                
         
         screen.fill(GRID_COLOR)
         
@@ -128,25 +130,29 @@ def play(num_row, num_col, num_mines, delay, auto_quit):
                     else:
                         pygame.draw.rect(screen, EMPTY_COLOR, [(MARGIN + TILE_WIDTH) * column + MARGIN, (MARGIN + TILE_HEIGHT) * row + MARGIN, TILE_WIDTH, TILE_HEIGHT])
         
+        pygame.draw.rect(screen, (28,28,28), [0, GAME_HEIGHT, WINDOW_WIDTH, TEXT_AREA])
+        
         if not (firstClick or gameover):
             if checkWin(NUM_ROW, NUM_COL):
                 tiles=NUM_ROW*NUM_COL
                 print("\nwin")
-                print("time elapsed: " + str((pygame.time.get_ticks()-start_time)/1000))
+                time_elapsed=(pygame.time.get_ticks()-start_time)/1000
+                print("time elapsed: " + str(time_elapsed))
                 print("moves made: " + str(moves_made))
                 gameover = True
 
             if lost:
                 tiles=tiles_opened(NUM_ROW, NUM_COL)
                 revealGrid(NUM_ROW, NUM_COL)
-                prev_boards.append(copy.deepcopy(grid_unopened))
+                prev_boards.append(copy.deepcopy(opened_tile))
                 current_revision+=1
                 print("\nlost")
-                print("time elapsed: " + str((pygame.time.get_ticks()-start_time)/1000))
+                time_elapsed=(pygame.time.get_ticks()-start_time)/1000
+                print("time elapsed: " + str(time_elapsed))
                 print("moves made: " + str(moves_made))
                 gameover = True
                 
-        BUTTON_COLOR = (62, 78, 99)
+        BUTTON_COLOR = (28,28,28)
         BUTTON_TEXT_COLOR = (255,255,255)
         
         pygame.draw.rect(screen, BUTTON_COLOR, [PLAYB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
@@ -169,18 +175,85 @@ def play(num_row, num_col, num_mines, delay, auto_quit):
         clock.tick(frame_rate)
         pygame.display.flip()
 
-        if auto_quit and gameover:
+        if auto_quit == 1 and gameover:
             done=True
     
     pygame.quit()
     
     if not lost:
-        return 1, moves_made, tiles
-    return 0, moves_made, tiles
+        return 1, moves_made, tiles-num_mines, time_elapsed
+    return 0, moves_made, tiles, time_elapsed
+
+
+def autoTrials(num_row, num_col, num_mines):
+    NUM_ROW, NUM_COL, NUM_MINES = num_row, num_col, num_mines
+    init_grids(NUM_ROW, NUM_COL)    
+
+    lost = False
+    gameover = False
     
+    pygame.init()
+    start_time = pygame.time.get_ticks()
+    firstClick = True
+
+    engine = minesweeper_engine(NUM_ROW, NUM_COL, num_mines)
+    
+    moves_made, tiles=0,0
+    
+    while not gameover:             
+        if firstClick:
+            row,col = engine.firstMove()
+            gen_board(row, col, NUM_ROW, NUM_COL, NUM_MINES)
+            print([[row,col]])
+            open_tiles(row, col, NUM_ROW, NUM_COL)
+            open_number(NUM_ROW, NUM_COL)
+            firstClick = False
+            moves_made+=1
+                               
+        elif not gameover:
+            to_open = makeMove(engine)
+            
+            if to_open != []:
+                moves_made+=len(to_open)
+                
+                for coord in to_open:
+                    row = coord[0]
+                    column = coord[1]
+                    
+                    if grid_values[row][column] != 10:
+                        open_tiles(row, column, NUM_ROW, NUM_COL)
+                        open_number(NUM_ROW, NUM_COL)
+                    else:
+                        lost = True
+            else:
+                lost = True
+                    
+        if not (firstClick or gameover):
+            if checkWin(NUM_ROW, NUM_COL):
+                tiles=NUM_ROW*NUM_COL
+                print("\nwin")
+                time_elapsed=(pygame.time.get_ticks()-start_time)/1000
+                print("time elapsed: " + str(time_elapsed))
+                print("moves made: " + str(moves_made))
+                gameover = True
+
+            if lost:
+                tiles=tiles_opened(NUM_ROW, NUM_COL)
+                revealGrid(NUM_ROW, NUM_COL)
+                print("\nlost")
+                time_elapsed=(pygame.time.get_ticks()-start_time)/1000
+                print("time elapsed: " + str(time_elapsed))
+                print("moves made: " + str(moves_made))
+                gameover = True
+    
+    if not lost:
+        return 1, moves_made, tiles-num_mines, time_elapsed
+    return 0, moves_made, tiles, time_elapsed
+
+
 def open_tiles(i, j, NUM_ROW, NUM_COL):
-    if not grid_unopened[i][j]: 
-        grid_unopened[i][j] = True
+    if not opened_tile[i][j]: 
+        opened_tile[i][j] = True
         if (i-1 > -1 and j-1 > -1 and grid_values[i-1][j-1] == 0):
             open_tiles(i-1, j-1, NUM_ROW, NUM_COL)
         if (i-1 > -1 and grid_values[i-1][j] == 0):
@@ -201,23 +274,23 @@ def open_tiles(i, j, NUM_ROW, NUM_COL):
 def open_number(NUM_ROW, NUM_COL):
     for i in range (NUM_ROW):
         for j in range (NUM_COL):
-            if (grid_values[i][j] == 0 and grid_unopened[i][j]):
-                if (i-1 > -1 and j-1 > -1 and not grid_unopened[i-1][j-1]):
-                    grid_unopened[i-1][j-1] = True
-                if (i-1 > -1 and not grid_unopened[i-1][j]):
-                    grid_unopened[i-1][j] = True
-                if (i-1 > -1 and j+1 < NUM_COL and not grid_unopened[i-1][j+1]):
-                    grid_unopened[i-1][j+1] = True
-                if (j-1 > -1 and not grid_unopened[i][j-1]):
-                    grid_unopened[i][j-1] = True
-                if (j+1 < NUM_COL and not grid_unopened[i][j+1]):
-                    grid_unopened[i][j+1] = True
-                if (i+1 < NUM_ROW and j-1 > -1 and not grid_unopened[i+1][j-1]):
-                    grid_unopened[i+1][j-1] = True
-                if (i+1 < NUM_ROW and not grid_unopened[i+1][j]):
-                    grid_unopened[i+1][j] = True
-                if (i+1 < NUM_ROW and j+1 < NUM_COL and not grid_unopened[i+1][j+1]):
-                    grid_unopened[i+1][j+1] = True
+            if (grid_values[i][j] == 0 and opened_tile[i][j]):
+                if (i-1 > -1 and j-1 > -1 and not opened_tile[i-1][j-1]):
+                    opened_tile[i-1][j-1] = True
+                if (i-1 > -1 and not opened_tile[i-1][j]):
+                    opened_tile[i-1][j] = True
+                if (i-1 > -1 and j+1 < NUM_COL and not opened_tile[i-1][j+1]):
+                    opened_tile[i-1][j+1] = True
+                if (j-1 > -1 and not opened_tile[i][j-1]):
+                    opened_tile[i][j-1] = True
+                if (j+1 < NUM_COL and not opened_tile[i][j+1]):
+                    opened_tile[i][j+1] = True
+                if (i+1 < NUM_ROW and j-1 > -1 and not opened_tile[i+1][j-1]):
+                    opened_tile[i+1][j-1] = True
+                if (i+1 < NUM_ROW and not opened_tile[i+1][j]):
+                    opened_tile[i+1][j] = True
+                if (i+1 < NUM_ROW and j+1 < NUM_COL and not opened_tile[i+1][j+1]):
+                    opened_tile[i+1][j+1] = True
 
 def gen_mines(row, col, NUM_ROW, NUM_COL, NUM_MINES):
     mine_locations=[]
@@ -279,81 +352,98 @@ def getImages():
 def checkWin(NUM_ROW, NUM_COL):
     for i in range(NUM_ROW):
         for j in range (NUM_COL):
-            if (grid_values[i][j] != 10 and not grid_unopened[i][j]):
+            if (grid_values[i][j] != 10 and not opened_tile[i][j]):
                 return False
     return True
 
 def revealGrid(NUM_ROW, NUM_COL):
     for i in range(NUM_ROW):
         for j in range(NUM_COL):
-            grid_unopened[i][j] = True
+            opened_tile[i][j] = True
     
 def resetBoard(NUM_ROW, NUM_COL):
-    if (grid_unopened == []):
+    if (opened_tile == []):
         return
     
     for row in range(NUM_ROW):
         for column in range(NUM_COL):
-            grid_unopened[row][column] = False
+            opened_tile[row][column] = False
             grid_flags[row][column] = False
             grid_values[row][column] = 0
     
 def init_grids(NUM_ROW, NUM_COL):
     for row in range(NUM_ROW):
         grid_values.append([])
-        grid_unopened.append([])
+        opened_tile.append([])
         grid_flags.append([])
         for column in range(NUM_COL):
-            grid_unopened[row].append(False)
+            opened_tile[row].append(False)
             grid_flags[row].append(False)
             grid_values[row].append(0)            
         
-
 def tiles_opened(NUM_ROW, NUM_COL):
     count=0
     for i in range (NUM_ROW):
         for j in range (NUM_COL):
-            if grid_unopened[i][j]:
+            if opened_tile[i][j]:
                 count+=1
     return count
 
 def makeMove(engine):     
-    return engine.detectMine(grid_unopened, grid_values)
+    return engine.makeMove(opened_tile, grid_values)
 
-def run(mode, delay, trials, autoQ):
+def run(mode, delay, trials, autoQ, autoT):
     wins = 0
     moves = 0
     tiles = 0
+    time = 0
     
     for i in range (trials):
         if mode == 0:
-            w,m,t=play(9,9,10,delay,autoQ)
+            mines=10
             row,col=9,9
         elif mode == 1:
-            w,m,t=play (16,16,40,delay,autoQ)
+            mines=40
             row,col=16,16
         else:
-            w,m,t=play (16,30,99,delay,autoQ)
+            mines=99
             row,col=16,30
+        
+        if autoT:
+            w,m,t,te=autoTrials(row,col,mines)
+        else:
+            w,m,t,te=play(row,col,mines,delay, autoQ)
             
         wins+=w
-        moves+=m
+        if w == 1:
+            moves+=m
         tiles+=t
-            
-    print("\n______________________________\n")
-    print("    Wins,Win Rate: " + str(wins) + ", " + str(wins*100/trials) + "%")
-    print("      Average Moves: " + str(moves//trials))
-    print("        Open Rate: " + str(tiles*100//(trials*row*col)) + "%")
-    print("______________________________")
+        time+=te
+   
+    if wins == 0:
+        avgmpw=0
+    else:
+        avgmpw=moves//wins
+                 
+    print("\n________________________________\n")
+    print("  Total Time Elapsed: " + format(time, '.3f') + "s")
+    print("      Solve Rate: " + format(wins*100/trials, '.1f') + "%")
+    print("    Avg. Moves per Win: " + str(avgmpw))
+    print("      Explore Rate: " + str(tiles*100//(trials*(row*col-mines))) + "%")
+    print("        Trials Run: " + str(trials))
+    print("    Solves: " + str(wins) + ", Losses: " + str(trials-wins))
+    print("________________________________")
 
 #---------------------------------------------------------------------------
 
-MODE=0
+DIFFICULTY=1
 DELAY=0
-TRIALS=50
-AUTOQUIT=True
+TRIALS=1
+AUTOQUIT=0
 
-run(MODE,DELAY,TRIALS,AUTOQUIT)
+AUTOTRIALS=0
+
+run(DIFFICULTY,DELAY,TRIALS,AUTOQUIT, AUTOTRIALS)
     
     
     

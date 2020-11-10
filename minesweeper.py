@@ -9,14 +9,20 @@ def play(num_row, num_col, num_mines, mode):
     init_grids(NUM_ROW, NUM_COL)
     
     # UNCLICKED_COLOR = (245, 249, 255)
-    UNCLICKED_COLOR = (255, 255, 255)
-    GRID_COLOR = (179, 195, 227)
-    EMPTY_COLOR = (209, 220, 237)
-    CLICKED_COLOR = (245, 249, 255)
+    # UNCLICKED_COLOR = (255, 255, 255)
+    # GRID_COLOR = (179, 195, 227)
+    # EMPTY_COLOR = (209, 220, 237)
+    # CLICKED_COLOR = (245, 249, 255)
+    
+    UNCLICKED_COLOR = (31, 31, 31)
+    GRID_COLOR = (40, 40, 40)
+    EMPTY_COLOR = (40, 40, 40)
+    CLICKED_COLOR = (31, 31, 31)
+    
 
-    TILE_WIDTH = TILE_HEIGHT = 30
+    TILE_WIDTH = TILE_HEIGHT = 25
     MARGIN = 2
-    TEXT_AREA = 60
+    TEXT_AREA = 50
 
     images = getImages()
     
@@ -29,7 +35,7 @@ def play(num_row, num_col, num_mines, mode):
     WINDOW_HEIGHT = GAME_HEIGHT+TEXT_AREA
     WINDOW_SIZE = [WINDOW_WIDTH, WINDOW_HEIGHT]
     
-    BUTTON_WIDTH, BUTTON_HEIGHT = 110, 38
+    BUTTON_WIDTH, BUTTON_HEIGHT = 80, 38
     BUTTON_TOP = (TEXT_AREA - BUTTON_HEIGHT)//2 + GAME_HEIGHT
     PLAYB_LEFT = (WINDOW_WIDTH // 2) - BUTTON_WIDTH - 9
     MENUB_LEFT= (WINDOW_WIDTH // 2) + 9
@@ -116,7 +122,8 @@ def play(num_row, num_col, num_mines, mode):
                 
                 if (not grid_unopened[row][column] and grid_flags[row][column]):
                     screen.blit(images[9], ((MARGIN + TILE_WIDTH) * column + MARGIN, (MARGIN + TILE_HEIGHT) * row + MARGIN)) 
-            
+         
+        pygame.draw.rect(screen, (28,28,28), [0, GAME_HEIGHT, WINDOW_WIDTH, TEXT_AREA])
         
         if not (firstClick or gameover):
             if checkWin(NUM_ROW, NUM_COL):
@@ -129,8 +136,8 @@ def play(num_row, num_col, num_mines, mode):
                 revealGrid(NUM_ROW, NUM_COL)
         
         if gameover:
-            MESSAGE_COLOR = (51, 63, 84)
-            MESSAGE_WIDTH, MESSAGE_HEIGHT = 180, 70
+            MESSAGE_COLOR = (23, 23, 23)
+            MESSAGE_WIDTH, MESSAGE_HEIGHT = 150, 50
             
             TEXT_WIDTH = WINDOW_WIDTH//2
             TEXT_HEIGHT = (WINDOW_HEIGHT-TEXT_AREA)//2 - 10
@@ -146,14 +153,14 @@ def play(num_row, num_col, num_mines, mode):
                 else:
                     msg = "Not bad"
                     
-                MESSAGE_HEIGHT = 90
+                MESSAGE_HEIGHT = 75
                 TEXT_HEIGHT -= 12
                 showTime = True
                 
             MESSAGE_LEFT = (WINDOW_WIDTH - MESSAGE_WIDTH)//2
             MESSAGE_TOP = (WINDOW_HEIGHT - TEXT_AREA - MESSAGE_HEIGHT)//2 - 10
         
-            msg_font = pygame.font.Font('freesansbold.ttf', 24)               
+            msg_font = pygame.font.Font('freesansbold.ttf', 20)               
             text = msg_font.render(msg, True, (255,255,255), MESSAGE_COLOR)   
             
             textRect = text.get_rect()
@@ -163,18 +170,20 @@ def play(num_row, num_col, num_mines, mode):
             screen.blit(text, textRect) 
             
             if showTime:                
-                time_font = pygame.font.Font('freesansbold.ttf', 20) 
+                time_font = pygame.font.Font('freesansbold.ttf', 18) 
                 time_text = time_font.render(str(finishTime)+"s", True, (218, 222, 224), MESSAGE_COLOR)   
             
                 time_text_rect = time_text.get_rect()
                 time_text_rect.center = (TEXT_WIDTH, TEXT_HEIGHT + 27)
                 screen.blit(time_text, time_text_rect) 
         
-        BUTTON_COLOR = (62, 78, 99)
+        
+        # BUTTON_COLOR = (62, 78, 99)
+        BUTTON_COLOR = (28,28,28)
         BUTTON_TEXT_COLOR = (255,255,255)
         
-        pygame.draw.rect(screen, BUTTON_COLOR, [PLAYB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
-        pygame.draw.rect(screen, BUTTON_COLOR, [MENUB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
+        # pygame.draw.rect(screen, BUTTON_COLOR, [PLAYB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
+        # pygame.draw.rect(screen, BUTTON_COLOR, [MENUB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
         
         play_font = pygame.font.Font('freesansbold.ttf', 16)               
         play_text = play_font.render("restart", True, BUTTON_TEXT_COLOR, BUTTON_COLOR)   
@@ -353,6 +362,10 @@ def gameMenu():
     SCREEN_WIDTH, SCREEN_HEIGHT = 280,300
     SCREEN_DIMENSION = (SCREEN_WIDTH,SCREEN_HEIGHT)
     
+    BG_COLOR = (28, 28, 28)
+    TEXT_COLOR = (255,255,255)
+    BUTTON_COLOR = (41, 41, 41)
+    
     OPT1_LEFT = 97
     OPT1_TOP = 76
     OPT1_WIDTH = 86
@@ -380,14 +393,14 @@ def gameMenu():
     pygame.display.set_caption('Minesweeper') 
       
     prompt_font = pygame.font.Font('freesansbold.ttf', 18) 
-    options_font = pygame.font.Font('freesansbold.ttf', 18) 
-    highscore_font = pygame.font.Font('freesansbold.ttf', 17) 
+    options_font = pygame.font.Font('freesansbold.ttf', 16) 
+    highscore_font = pygame.font.Font('freesansbold.ttf', 15) 
       
-    text = prompt_font.render('pick a difficulty.', True, (0,0,0), (240, 246, 255))   
-    opt1 = options_font.render('easy', True, (0,0,0), (193, 214, 247))
-    opt2 = options_font.render('kinda easy', True, (0,0,0), (193, 214, 247))
-    opt3 = options_font.render('not easy', True, (0,0,0), (193, 214, 247))
-    highscore = highscore_font.render('highscores', True, (0,0,0), (151, 172, 209))
+    text = prompt_font.render('pick a difficulty.', True, TEXT_COLOR, BG_COLOR)   
+    opt1 = options_font.render('easy', True, TEXT_COLOR, BUTTON_COLOR)
+    opt2 = options_font.render('kinda easy', True, TEXT_COLOR, BUTTON_COLOR)
+    opt3 = options_font.render('not easy', True, TEXT_COLOR, BUTTON_COLOR)
+    highscore = highscore_font.render('highscores', True, TEXT_COLOR, BUTTON_COLOR)
     
     textRect = text.get_rect()
     textRect.center = (140, 50) 
@@ -404,7 +417,7 @@ def gameMenu():
     
     scores_font = pygame.font.Font('freesansbold.ttf', 16) 
     
-    hstext = prompt_font.render('highscores.', True, (0,0,0), (240, 246, 255))       
+    hstext = prompt_font.render('highscores.', True, TEXT_COLOR, BG_COLOR)       
     hstextRect = hstext.get_rect()
     hstextRect.center = (140, 65)
     
@@ -413,10 +426,10 @@ def gameMenu():
     BACK_LEFT = (SCREEN_WIDTH-BACK_WIDTH)//2
     BACK_TOP = 215
     
-    back_font = pygame.font.Font('freesansbold.ttf', 17) 
-    backText = back_font.render('back', True, (0,0,0), (151, 172, 209))       
+    back_font = pygame.font.Font('freesansbold.ttf', 16) 
+    backText = back_font.render('back', True, TEXT_COLOR, BUTTON_COLOR)       
     backTextRect = backText.get_rect()
-    backTextRect.center = (SCREEN_WIDTH//2, BACK_TOP+16)
+    backTextRect.center = (SCREEN_WIDTH//2, BACK_TOP+17)
       
     done = False
     gameStart = False
@@ -425,14 +438,16 @@ def gameMenu():
     easyHS, kindaEasyHS, notEasyHS = 0,0,0
     
     while not done : 
-        screen.fill((240, 246, 255)) 
+        screen.fill(BG_COLOR) 
         if not viewHighscores:
+            
+            
             screen.blit(text, textRect) 
             
-            pygame.draw.rect(screen, (193, 214, 247), [OPT1_LEFT,OPT1_TOP,OPT1_WIDTH,OPT1_HEIGHT])
-            pygame.draw.rect(screen, (193, 214, 247), [OPT2_LEFT,OPT2_TOP,OPT2_WIDTH,OPT2_HEIGHT])
-            pygame.draw.rect(screen, (193, 214, 247), [OPT3_LEFT,OPT3_TOP,OPT3_WIDTH,OPT3_HEIGHT])
-            pygame.draw.rect(screen, (151, 172, 209), [HS_LEFT,HS_TOP,HS_WIDTH,HS_HEIGHT])
+            pygame.draw.rect(screen, BUTTON_COLOR, [OPT1_LEFT,OPT1_TOP,OPT1_WIDTH,OPT1_HEIGHT])
+            pygame.draw.rect(screen, BUTTON_COLOR, [OPT2_LEFT,OPT2_TOP,OPT2_WIDTH,OPT2_HEIGHT])
+            pygame.draw.rect(screen, BUTTON_COLOR, [OPT3_LEFT,OPT3_TOP,OPT3_WIDTH,OPT3_HEIGHT])
+            pygame.draw.rect(screen, BUTTON_COLOR, [HS_LEFT,HS_TOP,HS_WIDTH,HS_HEIGHT])
            
             screen.blit(opt1, opt1Rect) 
             screen.blit(opt2, opt2Rect)
@@ -489,15 +504,15 @@ def gameMenu():
         else:
             screen.blit(hstext, hstextRect) 
             
-            ezScore = scores_font.render('easy: ' + str(easyHS), True, (0,0,0), (240, 246, 255))       
+            ezScore = scores_font.render('easy: ' + str(easyHS), True, TEXT_COLOR, BG_COLOR)       
             ezScoreRect = ezScore.get_rect()
             ezScoreRect.center = (140, 109)
             
-            medScore = scores_font.render('kinda easy: ' + str(kindaEasyHS), True, (0,0,0), (240, 246, 255))       
+            medScore = scores_font.render('kinda easy: ' + str(kindaEasyHS), True, TEXT_COLOR, BG_COLOR)       
             medScoreRect = medScore.get_rect()
             medScoreRect.center = (140, 139)
             
-            hardScore = scores_font.render('not easy: ' + str(notEasyHS), True, (0,0,0), (240, 246, 255))       
+            hardScore = scores_font.render('not easy: ' + str(notEasyHS), True, TEXT_COLOR, BG_COLOR)       
             hardRect = hardScore.get_rect()
             hardRect.center = (140, 169)
             
@@ -505,7 +520,7 @@ def gameMenu():
             screen.blit(medScore, medScoreRect) 
             screen.blit(hardScore, hardRect) 
             
-            pygame.draw.rect(screen, (151, 172, 209), [BACK_LEFT,BACK_TOP,BACK_WIDTH,BACK_HEIGHT])
+            pygame.draw.rect(screen, BUTTON_COLOR, [BACK_LEFT,BACK_TOP,BACK_WIDTH,BACK_HEIGHT])
             screen.blit(backText, backTextRect)
             
             for event in pygame.event.get(): 

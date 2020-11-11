@@ -4,27 +4,41 @@ grid_unopened = []
 grid_values = []
 grid_flags = []
 
-def play(num_row, num_col, num_mines, mode):
+def play(num_row, num_col, num_mines, mode, color_scheme):
     NUM_ROW, NUM_COL, NUM_MINES, MODE = num_row, num_col, num_mines, mode
     init_grids(NUM_ROW, NUM_COL)
     
-    # UNCLICKED_COLOR = (245, 249, 255)
-    # UNCLICKED_COLOR = (255, 255, 255)
-    # GRID_COLOR = (179, 195, 227)
-    # EMPTY_COLOR = (209, 220, 237)
-    # CLICKED_COLOR = (245, 249, 255)
-    
-    UNCLICKED_COLOR = (31, 31, 31)
-    GRID_COLOR = (40, 40, 40)
-    EMPTY_COLOR = (40, 40, 40)
-    CLICKED_COLOR = (31, 31, 31)
+    if color_scheme:
+        UNCLICKED_COLOR = (31, 31, 31)
+        GRID_COLOR = (40, 40, 40)
+        EMPTY_COLOR = (40, 40, 40)
+        CLICKED_COLOR = (31, 31, 31)
+        
+        TEXT_AREA_COLOR = (28,28,28)
+        
+        MESSAGE_COLOR = (23, 23, 23)
+        
+        BUTTON_COLOR = (28,28,28)
+        BUTTON_TEXT_COLOR = (255,255,255)
+    else:
+        UNCLICKED_COLOR = (245, 249, 255)
+        GRID_COLOR = (179, 195, 227)
+        EMPTY_COLOR = (209, 220, 237)
+        CLICKED_COLOR = (245, 249, 255)
+        
+        TEXT_AREA_COLOR = GRID_COLOR
+        
+        MESSAGE_COLOR = (51, 63, 84)
+        
+        BUTTON_COLOR = (62, 78, 99)
+        BUTTON_TEXT_COLOR = (255,255,255)
     
 
     TILE_WIDTH = TILE_HEIGHT = 25
     MARGIN = 2
     TEXT_AREA = 50
 
-    images = getImages()
+    images = getImages(color_scheme)
     
     pygame.init
     
@@ -35,7 +49,7 @@ def play(num_row, num_col, num_mines, mode):
     WINDOW_HEIGHT = GAME_HEIGHT+TEXT_AREA
     WINDOW_SIZE = [WINDOW_WIDTH, WINDOW_HEIGHT]
     
-    BUTTON_WIDTH, BUTTON_HEIGHT = 80, 38
+    BUTTON_WIDTH, BUTTON_HEIGHT = 90, 32
     BUTTON_TOP = (TEXT_AREA - BUTTON_HEIGHT)//2 + GAME_HEIGHT
     PLAYB_LEFT = (WINDOW_WIDTH // 2) - BUTTON_WIDTH - 9
     MENUB_LEFT= (WINDOW_WIDTH // 2) + 9
@@ -123,7 +137,7 @@ def play(num_row, num_col, num_mines, mode):
                 if (not grid_unopened[row][column] and grid_flags[row][column]):
                     screen.blit(images[9], ((MARGIN + TILE_WIDTH) * column + MARGIN, (MARGIN + TILE_HEIGHT) * row + MARGIN)) 
          
-        pygame.draw.rect(screen, (28,28,28), [0, GAME_HEIGHT, WINDOW_WIDTH, TEXT_AREA])
+        pygame.draw.rect(screen, TEXT_AREA_COLOR, [0, GAME_HEIGHT, WINDOW_WIDTH, TEXT_AREA])
         
         if not (firstClick or gameover):
             if checkWin(NUM_ROW, NUM_COL):
@@ -136,7 +150,6 @@ def play(num_row, num_col, num_mines, mode):
                 revealGrid(NUM_ROW, NUM_COL)
         
         if gameover:
-            MESSAGE_COLOR = (23, 23, 23)
             MESSAGE_WIDTH, MESSAGE_HEIGHT = 150, 50
             
             TEXT_WIDTH = WINDOW_WIDTH//2
@@ -178,12 +191,10 @@ def play(num_row, num_col, num_mines, mode):
                 screen.blit(time_text, time_text_rect) 
         
         
-        # BUTTON_COLOR = (62, 78, 99)
-        BUTTON_COLOR = (28,28,28)
-        BUTTON_TEXT_COLOR = (255,255,255)
         
-        # pygame.draw.rect(screen, BUTTON_COLOR, [PLAYB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
-        # pygame.draw.rect(screen, BUTTON_COLOR, [MENUB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
+        
+        pygame.draw.rect(screen, BUTTON_COLOR, [PLAYB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
+        pygame.draw.rect(screen, BUTTON_COLOR, [MENUB_LEFT, BUTTON_TOP, BUTTON_WIDTH, BUTTON_HEIGHT])
         
         play_font = pygame.font.Font('freesansbold.ttf', 16)               
         play_text = play_font.render("restart", True, BUTTON_TEXT_COLOR, BUTTON_COLOR)   
@@ -203,9 +214,9 @@ def play(num_row, num_col, num_mines, mode):
         pygame.display.flip()
     
     if goBackToMenu:
-        gameMenu()
+        gameMenu(color_scheme)
     elif restart:
-        play(NUM_ROW, NUM_COL, NUM_MINES, MODE)
+        play(NUM_ROW, NUM_COL, NUM_MINES, MODE, color_scheme)
     
     pygame.quit()
     
@@ -291,19 +302,24 @@ def gen_board(row, col, NUM_ROW, NUM_COL, NUM_MINES):
                 
     return mine_locations
             
-def getImages():
+def getImages(color):
     images = []
+    
+    if color:
+        mode='dark'
+    else:
+        mode='light'
 
-    images.append(pygame.image.load('images\\mine.jpg'))
-    images.append(pygame.image.load('images\\one.jpg'))
-    images.append(pygame.image.load('images\\two.jpg'))
-    images.append(pygame.image.load('images\\three.jpg'))
-    images.append(pygame.image.load('images\\four.jpg'))
-    images.append(pygame.image.load('images\\five.jpg'))
-    images.append(pygame.image.load('images\\six.jpg'))
-    images.append(pygame.image.load('images\\seven.jpg'))
-    images.append(pygame.image.load('images\\eight.jpg'))
-    images.append(pygame.image.load('images\\flag.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\mine.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\one.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\two.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\three.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\four.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\five.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\six.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\seven.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\eight.jpg'))
+    images.append(pygame.image.load('images\\'+mode+'\\flag.jpg'))
 
     return images    
         
@@ -358,13 +374,18 @@ def setHighScore(mode, time):
         
     return False
             
-def gameMenu():
+def gameMenu(color):
     SCREEN_WIDTH, SCREEN_HEIGHT = 280,300
     SCREEN_DIMENSION = (SCREEN_WIDTH,SCREEN_HEIGHT)
     
-    BG_COLOR = (28, 28, 28)
-    TEXT_COLOR = (255,255,255)
-    BUTTON_COLOR = (41, 41, 41)
+    if color:
+        BG_COLOR = (28, 28, 28)
+        TEXT_COLOR = (255,255,255)
+        BUTTON_COLOR = (41, 41, 41)
+    else:
+        BG_COLOR = (240, 246, 255)
+        TEXT_COLOR = (0,0,0)
+        BUTTON_COLOR = (193, 214, 247)
     
     OPT1_LEFT = 97
     OPT1_TOP = 76
@@ -385,6 +406,10 @@ def gameMenu():
     HS_TOP = 220
     HS_WIDTH = 141
     HS_HEIGHT = 34
+    
+    COLOR_WIDTH = 12
+    COLOR_LEFT = (SCREEN_WIDTH-COLOR_WIDTH)-6
+    COLOR_TOP = (SCREEN_HEIGHT-COLOR_WIDTH)-6
     
     pygame.init() 
 
@@ -448,11 +473,14 @@ def gameMenu():
             pygame.draw.rect(screen, BUTTON_COLOR, [OPT2_LEFT,OPT2_TOP,OPT2_WIDTH,OPT2_HEIGHT])
             pygame.draw.rect(screen, BUTTON_COLOR, [OPT3_LEFT,OPT3_TOP,OPT3_WIDTH,OPT3_HEIGHT])
             pygame.draw.rect(screen, BUTTON_COLOR, [HS_LEFT,HS_TOP,HS_WIDTH,HS_HEIGHT])
+            pygame.draw.rect(screen, TEXT_COLOR, [COLOR_LEFT,COLOR_TOP,COLOR_WIDTH,COLOR_WIDTH])
            
             screen.blit(opt1, opt1Rect) 
             screen.blit(opt2, opt2Rect)
             screen.blit(opt3, opt3Rect)
             screen.blit(highscore, hsRect)
+            
+            
             
             row, col, mines, mode = 0,0,0,0
             
@@ -479,6 +507,28 @@ def gameMenu():
                             mode=2
                             gameStart = True
                             done = True
+                    if (pos[0] >= COLOR_LEFT and pos[0] <= COLOR_LEFT+COLOR_WIDTH):
+                        if (pos[1] >= COLOR_TOP and pos[1] <= COLOR_TOP+COLOR_WIDTH):
+                            color=not color
+                            
+                            if color:
+                                BG_COLOR = (28, 28, 28)
+                                TEXT_COLOR = (255,255,255)
+                                BUTTON_COLOR = (41, 41, 41)
+                            else:
+                                BG_COLOR = (240, 246, 255)
+                                TEXT_COLOR = (0,0,0)
+                                BUTTON_COLOR = (193, 214, 247)
+                                
+                            text = prompt_font.render('pick a difficulty.', True, TEXT_COLOR, BG_COLOR)   
+                            opt1 = options_font.render('easy', True, TEXT_COLOR, BUTTON_COLOR)
+                            opt2 = options_font.render('kinda easy', True, TEXT_COLOR, BUTTON_COLOR)
+                            opt3 = options_font.render('not easy', True, TEXT_COLOR, BUTTON_COLOR)
+                            highscore = highscore_font.render('highscores', True, TEXT_COLOR, BUTTON_COLOR)
+                            hstext = prompt_font.render('highscores.', True, TEXT_COLOR, BG_COLOR)       
+                            backText = back_font.render('back', True, TEXT_COLOR, BUTTON_COLOR)
+                            
+                            print("clicked")
                     if (pos[0] >= HS_LEFT and pos[0] <= HS_LEFT+HS_WIDTH):
                         if (pos[1] >= HS_TOP and pos[1] <= HS_TOP+HS_HEIGHT):
                             viewHighscores = True
@@ -536,11 +586,11 @@ def gameMenu():
         pygame.display.flip()
         
     if gameStart:
-        play(row, col, mines, mode)
+        play(row, col, mines, mode, color)
         
     pygame.quit()
         
-gameMenu() 
+gameMenu(False) 
     
     
     

@@ -336,16 +336,16 @@ def gen_board(row, col, NUM_ROW, NUM_COL, NUM_MINES):
 def getImages():
     images = []
 
-    images.append(pygame.image.load('images\\mine.jpg'))
-    images.append(pygame.image.load('images\\one.jpg'))
-    images.append(pygame.image.load('images\\two.jpg'))
-    images.append(pygame.image.load('images\\three.jpg'))
-    images.append(pygame.image.load('images\\four.jpg'))
-    images.append(pygame.image.load('images\\five.jpg'))
-    images.append(pygame.image.load('images\\six.jpg'))
-    images.append(pygame.image.load('images\\seven.jpg'))
-    images.append(pygame.image.load('images\\eight.jpg'))
-    images.append(pygame.image.load('images\\flag.jpg'))
+    images.append(pygame.image.load('images\\dark\\mine.jpg'))
+    images.append(pygame.image.load('images\\dark\\one.jpg'))
+    images.append(pygame.image.load('images\\dark\\two.jpg'))
+    images.append(pygame.image.load('images\\dark\\three.jpg'))
+    images.append(pygame.image.load('images\\dark\\four.jpg'))
+    images.append(pygame.image.load('images\\dark\\five.jpg'))
+    images.append(pygame.image.load('images\\dark\\six.jpg'))
+    images.append(pygame.image.load('images\\dark\\seven.jpg'))
+    images.append(pygame.image.load('images\\dark\\eight.jpg'))
+    images.append(pygame.image.load('images\\dark\\flag.jpg'))
 
     return images    
 
@@ -436,9 +436,9 @@ def run(mode, delay, trials, autoQ, autoT):
 
 #---------------------------------------------------------------------------
 
-DIFFICULTY=1
+DIFFICULTY=2
 DELAY=0
-TRIALS=1
+TRIALS=8
 AUTOQUIT=0
 
 AUTOTRIALS=0
